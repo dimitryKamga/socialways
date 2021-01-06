@@ -1,4 +1,6 @@
 import os
+####  1. Importing MLflow module ################################
+import mlflow
 import time
 import argparse
 import matplotlib.pyplot as plt
@@ -14,7 +16,7 @@ from utils.parse_utils import Scale
 from torch.utils.data import DataLoader
 from utils.linear_models import predict_cv
 
-
+####  2. Analysis on all the parsing arguments to identify project entry points ################################
 # Parser arguments
 parser = argparse.ArgumentParser(description='Social Ways trajectory prediction.')
 parser.add_argument('--batch-size', '--b',
@@ -55,6 +57,9 @@ dataset_name = args.dataset
 model_name = args.model
 input_file = 'datasets/hotel-8-12.npz'
 model_file = 'trained_models/' + model_name + '-' + dataset_name + '.pt'
+
+####  Log artifacts ################################
+mlflow.log_artifact('datasets/obsmat.txt')
 
 # FIXME: ====== training hyper-parameters ======
 # Unrolled GAN
@@ -663,6 +668,6 @@ for epoch in trange(start_epoch, n_epochs + 1):  # FIXME : set the number of epo
         }, model_file)
 
     if epoch % 5 == 0:
-        wr_dir = '../medium/' + dataset_name + '/' + model_name + '/' + str(epoch)
+        wr_dir = 'medium/' + dataset_name + '/' + model_name + '/' + str(epoch)
         os.makedirs(wr_dir, exist_ok=True)
         test(128, write_to_file=wr_dir, just_one=True)
